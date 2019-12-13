@@ -15,21 +15,11 @@
 -- Revision: 
 -- Revision 0.01 - File Created
 -- Additional Comments: 
---
-----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
-
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity VGA_DRIVER is
 	port(
@@ -44,12 +34,12 @@ end VGA_DRIVER;
 
 architecture Beh of VGA_DRIVER is
 
-	constant HD : integer := 640; --400
+	constant HD : integer := 639; --400
 	constant HFP : integer := 16;
 	constant HSP : integer := 96;
 	constant HBP : integer := 48;
 	
-	constant VD : integer := 480; --399
+	constant VD : integer := 479; --399
 	constant VFP : integer := 11;
 	constant VSP : integer := 2;
 	constant VBP : integer := 31;
@@ -57,6 +47,7 @@ architecture Beh of VGA_DRIVER is
 	signal hPos : integer := 0;
 	signal vPos : integer := 0;
 	
+	signal video_on : std_logic;
 begin
 
 	H_POS_COUNTER : process(CLK, RST)
@@ -130,30 +121,22 @@ begin
 --			end if;
 --		end if;
 --	end process;
---	disp_ena <= video_on;
-	
---draw:process(CLK, hPos, vPos, video_on)
---begin
---	if (RST = '1') then
---		R<=(others=>'0');
---		G<=(others=>'0');
---		B<=(others=>'0');
---	elsif(CLK'event and CLK = '1')then
---		if(video_on = '1')then
---			if (hPos > 0 AND hPos < HD) AND (vPos > 0 AND vPos < VD) then
---					R<=DOUTA(11 downto 8);
---					G<=DOUTA(7 downto 4);
---					B<=DOUTA(3 downto 0);
---					R<=(others=>'0');G<=(others=>'0');B<=(others=>'1');
---			else 
---				R<=(others=>'0');
---				G<=(others=>'0');
---				B<=(others=>'0');
+--
+--	
+--	draw:process(CLK, hPos, vPos, video_on)
+--	begin
+--		if (RST = '1') then
+--			RGB<=(others=>'0');
+--		elsif(CLK'event and CLK = '1')then
+--			if(video_on = '1')then
+--				if (hPos > 0 AND hPos < HD) AND (vPos > 0 AND vPos < VD) then
+--					RGB<="000000001111";
+--				else 
+--					RGB<=(others=>'0');
+--				end if;
 --			end if;
 --		end if;
---	end if;
---	end process;
+--		end process;
 
-	
 end Beh;
 

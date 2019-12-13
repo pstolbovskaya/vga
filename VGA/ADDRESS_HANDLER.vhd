@@ -5,8 +5,8 @@ use ieee.Numeric_Std.all;
 
 entity ADDRESS_HANDLER is
 	generic (
-		Height: integer;
-		Width : integer
+		Height: integer := 640;
+		Width : integer := 480
 	);
 	port (
 		CLK : in std_logic;
@@ -25,7 +25,7 @@ begin
 	begin
 		if (rising_edge(CLK)) then
 			if ((h_pos < Width) and (v_pos < Height)) then
-				temp <= std_logic_vector(to_unsigned(v_pos * Height + h_pos, 16));
+				temp <= std_logic_vector(to_unsigned((v_pos * Height + h_pos) mod 3599, 16));
 			end if;
 		end if;
 	end process;

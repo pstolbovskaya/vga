@@ -10,16 +10,16 @@ entity Picture_Block_RAM is
 	port (
 		CLK : in std_logic;
 		WR : in std_logic;
-		AB : in std_logic_vector(0 to AddressWidth - 1);
-		DB : inout std_logic_vector(0 to DataWidth - 1)
+		AB : in std_logic_vector(AddressWidth - 1 downto 0);
+		DB : out std_logic_vector(DataWidth - 1 downto 0)
 	);
 end Picture_Block_RAM;	
 
 architecture Behavioral of Picture_Block_RAM is
 
-	subtype word is std_logic_vector (0 to DataWidth - 1);
+	subtype word is std_logic_vector (DataWidth - 1 downto 0);
 	
-	type tram is array (0 to 3599 ) of word;
+	type tram is array (0 to 3599) of word;
 	
 	constant picture : tram := (
 	"011001011110",
@@ -3624,34 +3624,24 @@ architecture Behavioral of Picture_Block_RAM is
 "010110100000"
 	);	
 	
---	for I in picture'range loop
---		Q <= picture(I);
---	end loop;
-signal sRAM : tram;
-	
-	signal adrreg : integer;
-	
+	signal adrreg : natural;
+	signal rom_data : std_logic_vector(DataWidth - 1 downto 0);
+	signal reg_out : std_logic_vector(DataWidth - 1 downto 0);
+
 begin
 	
 	adrreg <= to_integer(unsigned(AB));
+	rom_data <= picture(adrreg);
 	
-	WRP : process(WR, CLK, DB)
+	P_REG_OUT: process (CLK,WR,rom_data)
 	begin
-		if (WR = '0') then
-			if (rising_edge(CLK)) then
-				sRam(adrreg) <= DB;
+		if (WR= '1') then
+			if (rising_edge (CLK)) then
+				reg_out<=rom_data;
 			end if;
 		end if;
 	end process;
 	
-	RDP : process(WR, CLK, DB)
-	begin
-		if (WR = '1') then
---			DB <= sRam(AB);
-			DB <= picture(adrreg);
-		else
-			DB <= (others => 'Z');
-		end if;
-	end process;
+	DB <= reg_out;
 end Behavioral;
 

@@ -34,9 +34,8 @@ architecture Behavioral of main is
 			RST : in std_logic;
 			HSYNC : out std_logic;
 			VSYNC : out std_logic;
-			HorPos : integer; 
-			VerPos : integer;
-			disp_ena : out std_logic
+			HorPos : out integer;
+			VerPos : out integer
 		);
 	end component;
 
@@ -61,13 +60,15 @@ architecture Behavioral of main is
 		port (
 			CLK : in std_logic;
 			WR : in std_logic;
-			AB : in std_logic_vector(0 to AddressWidth - 1);
-			DB : inout std_logic_vector(0 to DataWidth - 1)
+			AB : in std_logic_vector(AddressWidth - 1 downto 0);
+			DB : inout std_logic_vector(DataWidth - 1 downto 0)
 		);
 	end component;
 	
 	constant screen_width : integer := 640;
 	constant screen_height : integer := 480;
+	
+	constant divide_counter : std_logic_vector(2 downto 0) := "100";
 	
 	signal div_CLK: std_logic;
 --	signal out_h_pos : std_logic;
@@ -75,10 +76,15 @@ architecture Behavioral of main is
 	signal out_h_pos : integer;
 	signal out_v_pos : integer;
 	signal out_addr : std_logic_vector(15 downto 0);
-	signal rgb : std_logic_vector(0 to 11);
+	signal rgb : std_logic_vector(11 downto 0);
 begin
 
-	U1: FDIV port map 
+	U1: FDIV  
+	generic map
+	(
+		n => 2
+	)
+	port map
 	(
 		CLK => CLK,
 		RST => RST,
@@ -124,8 +130,8 @@ begin
 		DB => rgb
 	);
 	
-	R <= rgb(0 to 3);
-	G <= rgb(4 to 7);
-	B <= rgb(8 to 11);
+	R <= rgb(3 downto 0);
+	G <= rgb(7 downto 4);
+	B <= rgb(11 downto 8);
 end Behavioral;
 
