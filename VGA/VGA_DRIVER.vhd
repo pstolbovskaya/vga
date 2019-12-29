@@ -27,6 +27,8 @@ entity VGA_DRIVER is
 		RST : in std_logic;
 		HSYNC : out std_logic;
 		VSYNC : out std_logic;
+		db : in std_logic_vector(11 downto 0) := "000000000000";
+		rgb : out std_logic_vector(11 downto 0);
 		HorPos : out integer; 
 		VerPos : out integer
 	);
@@ -109,34 +111,34 @@ begin
 	HorPos <= hPos;
 	VerPos <= vPos;
 	
---	VIDEO: process (CLK, RST, hPos, vPos)
---	begin
---		if (RST = '1') then
---			video_on <= '0';
---		elsif (rising_edge(CLK)) then
---			if (hPos < HD and vPos < VD) then
---				video_on <= '1';
---			else
---				video_on <= '0';
---			end if;
---		end if;
---	end process;
---
---	
---	draw:process(CLK, hPos, vPos, video_on)
---	begin
---		if (RST = '1') then
---			RGB<=(others=>'0');
---		elsif(CLK'event and CLK = '1')then
---			if(video_on = '1')then
---				if (hPos > 0 AND hPos < HD) AND (vPos > 0 AND vPos < VD) then
---					RGB<="000000001111";
---				else 
---					RGB<=(others=>'0');
---				end if;
---			end if;
---		end if;
---		end process;
+	VIDEO: process (CLK, RST, hPos, vPos)
+	begin
+		if (RST = '1') then
+			video_on <= '0';
+		elsif (rising_edge(CLK)) then
+			if (hPos < HD and vPos < VD) then
+				video_on <= '1';
+			else
+				video_on <= '0';
+			end if;
+		end if;
+	end process;
+
+	
+	draw:process(CLK, hPos, vPos, video_on, db)
+	begin
+		if (RST = '1') then
+			RGB<=(others=>'0');
+		elsif(CLK'event and CLK = '1')then
+			if(video_on = '1')then
+				if ((hPos > 0) AND (hPos < HD)) AND ((vPos > 0) AND (vPos < VD)) then
+					RGB<=db;
+				else 
+					RGB<=(others=>'0');
+				end if;
+			end if;
+		end if;
+		end process;
 
 end Beh;
 
